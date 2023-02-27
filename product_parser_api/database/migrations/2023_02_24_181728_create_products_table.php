@@ -10,15 +10,15 @@ return new class extends Migration
     {
         Schema::create('products', function (Blueprint $table) {
             $table->id();
-            $table->longText('code');
+            $table->bigInteger('code');
             $table->enum('status', ['published', 'draft', 'trash']);
-            $table->longText('imported_t');
+            $table->string('imported_t');
             $table->longText('url');
-            $table->longText('creator');
-            $table->longText('created_t');
+            $table->string('creator');
+            $table->string('created_t');
             $table->longText('last_modified_t');
-            $table->longText('product_name');
-            $table->longText('quantity');
+            $table->string('product_name');
+            $table->string('quantity');
             $table->longText('brands');
             $table->longText('categories');
             $table->longText('labels');

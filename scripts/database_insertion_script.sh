@@ -25,29 +25,29 @@ function insert_data() {
         eval "data=$compact_json" # Convert string to JSON object
 
         # Parse JSON data to extract values
-        code=${data.code}
-        status=${data.status}
-        imported_t=$(date -u +%s)
-        url=${data.url}
-        creator=${data.creator}
-        created_t=${data.created_t}
-        last_modified_t=${data.last_modified_t}
-        product_name=${data.product_name}
-        quantity=${data.quantity}
-        brands=${data.brands}
-        categories=${data.categories}
-        labels=${data.labels}
-        cities=${data.cities}
-        purchase_places=${data.purchase_places}
-        stores=${data.stores}
-        ingredients_text=${data.ingredients_text}
-        traces=${data.traces}
-        serving_size=${data.serving_size}
-        serving_quantity=${data.serving_quantity}
-        nutriscore_score=${data.nutriscore_score}
-        nutriscore_grade=${data.nutriscore_grade}
-        main_category=${data.main_category}
-        image_url=${data.image_url}
+        code=$(echo $line | jq '.code' | tr -d '"')
+        status="published"
+        imported_t=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+        url=$(echo $line | jq '.url')
+        creator=$(echo $line | jq '.creator')
+        created_t=$(echo $line | jq '.created_t')
+        last_modified_t=$(echo $line | jq '.last_modified_t')
+        product_name=$(echo $line | jq '.product_name')
+        quantity=$(echo $line | jq '.quantity')
+        brands=$(echo $line | jq '.brands')
+        categories=$(echo $line | jq '.categories')
+        labels=$(echo $line | jq '.labels')
+        cities=$(echo $line | jq '.cities')
+        purchase_places=$(echo $line | jq '.purchase_places')
+        stores=$(echo $line | jq '.stores')
+        ingredients_text=$(echo $line | jq '.ingredients_text')
+        traces=$(echo $line | jq '.traces')
+        serving_size=$(echo $line | jq '.serving_size')
+        serving_quantity=$(echo $line | jq '.serving_quantity')
+        nutriscore_score=$(echo $line | jq '.nutriscore_score')
+        nutriscore_grade=$(echo $line | jq '.nutriscore_grade')
+        main_category=$(echo $line | jq '.main_category')
+        image_url=$(echo $line | jq '.image_url')
 
         # Insert data into database
         mysql -u $DB_USER -p$DB_PASSWORD -h $DB_HOST $DB_NAME -e \
@@ -62,7 +62,7 @@ function insert_data() {
 }
 
 # Loop through each file, download and extract the JSON data, and insert into database
-for i in {1..9}; do
+for i in {2..9}; do
     #check if file has imported into database before in the json_inserted table
     if [ $(mysql -u $DB_USER -p$DB_PASSWORD -h $DB_HOST $DB_NAME -e "SELECT * FROM json_inserted WHERE file_name = 'products_0$i.json';" | wc -l) -gt 1 ]; then
         echo "File products_0$i.json has already been imported into database"
