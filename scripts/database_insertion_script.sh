@@ -49,9 +49,11 @@ function insert_data() {
         main_category=$(echo $line | jq '.main_category')
         image_url=$(echo $line | jq '.image_url')
 
-        # Insert data into database
-        mysql -u $DB_USER -p$DB_PASSWORD -h $DB_HOST $DB_NAME -e \
-        "INSERT INTO $TABLE_NAME (code, status, imported_t, url, creator, created_t, last_modified_t, product_name, quantity, brands, categories, labels, cities, purchase_places, stores, ingredients_text, traces, serving_size, serving_quantity, nutriscore_score, nutriscore_grade, main_category, image_url) VALUES ('$code', '$status', '$imported_t', '$url', '$creator', '$created_t', '$last_modified_t', '$product_name', '$quantity', '$brands', '$categories', '$labels', '$cities', '$purchase_places', '$stores', '$ingredients_text', '$traces', '$serving_size', '$serving_quantity', '$nutriscore_score', '$nutriscore_grade', '$main_category', '$image_url');"
+        # Insert data into database if code is not null
+        if [ $(echo $line | jq '.code' | tr -d '"') ]; then
+            mysql -u $DB_USER -p$DB_PASSWORD -h $DB_HOST $DB_NAME -e \
+            "INSERT INTO $TABLE_NAME (code, status, imported_t, url, creator, created_t, last_modified_t, product_name, quantity, brands, categories, labels, cities, purchase_places, stores, ingredients_text, traces, serving_size, serving_quantity, nutriscore_score, nutriscore_grade, main_category, image_url) VALUES ('$code', '$status', '$imported_t', '$url', '$creator', '$created_t', '$last_modified_t', '$product_name', '$quantity', '$brands', '$categories', '$labels', '$cities', '$purchase_places', '$stores', '$ingredients_text', '$traces', '$serving_size', '$serving_quantity', '$nutriscore_score', '$nutriscore_grade', '$main_category', '$image_url');"
+        fi
 
         i=$((i+1))
     done < $file
@@ -61,6 +63,10 @@ function insert_data() {
     "INSERT INTO json_inserted (file_name) VALUES ('$file');"
 }
 
+# Save in cron_executations table the time the script was executed
+mysql -u $DB_USER -p$DB_PASSWORD -h $DB_HOST $DB_NAME -e \
+"INSERT INTO cron_executations (runned_at) VALUES (NOW());"
+
 # Get file names from index.txt
 FILES=$(curl -s https://challenges.coode.sh/food/data/json/index.txt)
 FILES_ARRAY=($FILES)
@@ -69,7 +75,7 @@ FILES_ARRAY=($FILES)
 for file in "${FILES_ARRAY[@]}"; do
     filename=$(basename $file .json.gz)
     #check if file has imported into database before in the json_inserted table
-    if [ $(mysql -u $DB_USER -p$DB_PASSWORD -h $DB_HOST $DB_NAME -e "SELECT * FROM json_inserted WHERE file_name = 'products_0$i.json';" | wc -l) -gt 1 ]; then
+    if [ $(mysql -u $DB_USER -p$DB_PASSWORD -h $DB_HOST $DB_NAME -e "SELECT * FROM json_inserted WHERE file_name = '$filename.json';" | wc -l) -gt 1 ]; then
         echo "File $filename.json has already been imported into database"
         continue
     fi
