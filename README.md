@@ -4,11 +4,11 @@ O projeto consiste em uma REST API utilizando os dados do Open Food Facts
 
 ## Endpoints
 
- - `GET /`: Detalhes da API, se conexão leitura e escritura com a base de dados está OK, horário da última vez que o CRON foi executado, tempo online e uso de memória.
- - `PUT /products/:code`: Atualiza um produto
- - `DELETE /products/:code`: Muda o status do produto para `trash`
- - `GET /products/:code`: Obtém a informação somente de um produto da base de dados
- - `GET /products`: Lista todos os produtos da base de dados
+ - `GET api/`: Detalhes da API, se conexão leitura e escritura com a base de dados está OK, horário da última vez que o CRON foi executado, tempo online e uso de memória.
+ - `PUT api/products/:code`: Atualiza um produto
+ - `DELETE api/products/:code`: Muda o status do produto para `trash`
+ - `GET api/products/:code`: Obtém a informação somente de um produto da base de dados
+ - `GET api/products`: Lista todos os produtos da base de dados
 
 # Tecnologias
 - Laravel e Php
