@@ -61,27 +61,32 @@ function insert_data() {
     "INSERT INTO json_inserted (file_name) VALUES ('$file');"
 }
 
+# Get file names from index.txt
+FILES=$(curl -s https://challenges.coode.sh/food/data/json/index.txt)
+FILES_ARRAY=($FILES)
+
 # Loop through each file, download and extract the JSON data, and insert into database
-for i in {2..9}; do
+for file in "${FILES_ARRAY[@]}"; do
+    filename=$(basename $file .json.gz)
     #check if file has imported into database before in the json_inserted table
     if [ $(mysql -u $DB_USER -p$DB_PASSWORD -h $DB_HOST $DB_NAME -e "SELECT * FROM json_inserted WHERE file_name = 'products_0$i.json';" | wc -l) -gt 1 ]; then
-        echo "File products_0$i.json has already been imported into database"
+        echo "File $filename.json has already been imported into database"
         continue
     fi
 
     # Download and extract JSON data
-    url="https://challenges.coode.sh/food/data/json/products_0$i.json.gz"
+    url="https://challenges.coode.sh/food/data/json/$filename.json.gz"
     echo "Downloading $url"
-    php -r "copy('$url', 'products_0$i.json.gz');"
+    php -r "copy('$url', '$filename.json.gz');"
     # Wait download to complete
     sleep 10
     echo "Extracting JSON data"
-    gunzip products_0$i.json.gz
+    gunzip $filename.json.gz
     # Insert data into database
     echo "Inserting data into database"
-    insert_data products_0$i.json
+    insert_data $filename.json
     # delete file
-    rm products_0$i.json
+    rm $filename.json
     # Wait for 5 seconds before processing the next file
     sleep 5
 done
