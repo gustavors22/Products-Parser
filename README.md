@@ -2,6 +2,14 @@
 
 O projeto consiste em uma REST API utilizando os dados do Open Food Facts
 
+## Endpoints
+
+ - `GET /`: Detalhes da API, se conexão leitura e escritura com a base de dados está OK, horário da última vez que o CRON foi executado, tempo online e uso de memória.
+ - `PUT /products/:code`: Atualiza um produto
+ - `DELETE /products/:code`: Muda o status do produto para `trash`
+ - `GET /products/:code`: Obtém a informação somente de um produto da base de dados
+ - `GET /products`: Lista todos os produtos da base de dados
+
 # Tecnologias
 - Laravel e Php
 - Mysql
@@ -76,24 +84,35 @@ php artisan serve
 cd scripts/
 ```
 
-2. Execute o seguinte comando para dar a permissão de execução para o arquivo database_insertion_script.sh.
+2. Adicione as informações do seu banco de dados na primeira parte do database_insertion_script.sh como mostrado abaixo.
+
+```bash
+# Define database credentials
+DB_USER="root"
+DB_PASSWORD="root"
+DB_HOST="127.0.0.1"
+DB_NAME="products_db"
+TABLE_NAME="products"
+```
+
+3. Execute o seguinte comando para dar a permissão de execução para o arquivo database_insertion_script.sh.
 
 ```bash
 chmod +x ./database_insertion_script.sh
 ````
 
-3. Caso queira que o script seja executado apenas uma vez, basta executar o seguinte comando.
+4. Caso queira que o script seja executado apenas uma vez, basta executar o seguinte comando.
 
 ```bash
 ./database_insertion_script.sh
 ```
-4. Caso queira que o script execute todos os dias as 3 horas da manhã, execute o comando abaixo.
+5. Caso queira que o script execute todos os dias as 3 horas da manhã, execute o comando abaixo.
 
 ```bash
 crontab -e
 ```
 
-4. Se você nunca definiu uma tarefa cron antes, o sistema pode pedir para escolher o editor de texto padrão. Escolha o editor de sua preferência e prossiga. No final do arquivo, adicione a seguinte linha:
+6. Se você nunca definiu uma tarefa cron antes, o sistema pode pedir para escolher o editor de texto padrão. Escolha o editor de sua preferência e prossiga. No final do arquivo, adicione a seguinte linha:
 
 ```cron
 0 3 * * * /caminho/para/scripts/database_insertion_script.sh

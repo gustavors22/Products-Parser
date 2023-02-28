@@ -10,7 +10,7 @@ class ProductsController extends Controller
 {
     public function index()
     {
-        $products = Product::paginate(20);
+        $products = Product::where('status', '!=', 'trash')->paginate(20);
 
         return response()->json($products, 200);
     }
@@ -19,7 +19,7 @@ class ProductsController extends Controller
     {
         $product = Product::where('code', $code)->first();
 
-        if (!$product) {
+        if (!$product || $product->status == 'trash') {
             return response()->json([
                 'message' => 'Product not found'
             ], 404);
@@ -28,12 +28,11 @@ class ProductsController extends Controller
         return response()->json($product, 200);
     }
 
-
     public function update(Request $request, string $code)
     {
         $product = Product::where('code', $code)->first();
 
-        if (!$product) {
+        if (!$product || $product->status == 'trash') {
             return response()->json([
                 'message' => 'Product not found'
             ], 404);
@@ -48,17 +47,17 @@ class ProductsController extends Controller
     {
         $product = Product::where('code', $code)->first();
 
-        if (!$product) {
+        if (!$product || $product->status == 'trash') {
             return response()->json([
                 'message' => 'Product not found'
             ], 404);
         }
 
-        $product->delete();
+        $product->update([
+            'status' => 'trash'
+        ]);
 
-        return response()->json([
-            'message' => 'Product deleted'
-        ], 204);
+        return response()->json([], 204);
     }
 }
 
