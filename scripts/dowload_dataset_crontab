@@ -1,1 +1,0 @@
-0 3 * * * /usr/bin/wget -P /home/user/data/json/ https://challenges.coode.sh/food/data/json/{products_01..09}.json.gz && gunzip /home/user/data/json/*.json.gz && /home/user/scripts/database_insertion_script.sh
