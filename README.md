@@ -101,18 +101,32 @@ TABLE_NAME="products"
 chmod +x ./database_insertion_script.sh
 ````
 
-4. Caso queira que o script seja executado apenas uma vez, basta executar o seguinte comando.
+4. Instale a ferramenta de manipulação de json utilizada pelo script.
+
+linux
+```
+sudo apt-get update
+sudo apt-get install jq
+```
+
+MacOs
+```
+brew install jq
+```
+
+
+5. Caso queira que o script seja executado apenas uma vez, basta executar o seguinte comando.
 
 ```bash
 ./database_insertion_script.sh
 ```
-5. Caso queira que o script execute todos os dias as 3 horas da manhã, execute o comando abaixo.
+6. Caso queira que o script execute todos os dias as 3 horas da manhã, execute o comando abaixo.
 
 ```bash
 crontab -e
 ```
 
-6. Se você nunca definiu uma tarefa cron antes, o sistema pode pedir para escolher o editor de texto padrão. Escolha o editor de sua preferência e prossiga. No final do arquivo, adicione a seguinte linha:
+7. Se você nunca definiu uma tarefa cron antes, o sistema pode pedir para escolher o editor de texto padrão. Escolha o editor de sua preferência e prossiga. No final do arquivo, adicione a seguinte linha:
 
 ```cron
 0 3 * * * /caminho/para/scripts/database_insertion_script.sh
